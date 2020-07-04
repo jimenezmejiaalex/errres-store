@@ -25,6 +25,12 @@ export default {
     },
     addToCart(state, data) {
       state.cart.push(data.pop())
+      this.$auth.user.products = state.cart
+      this.$auth.$storage.setLocalStorage(
+        'user',
+        JSON.stringify(this.$auth.user),
+        true
+      )
     },
     deleteItemCart(state, id) {
       state.cart = state.cart.filter((item) => item.id !== id)
@@ -78,6 +84,11 @@ export default {
           {
             ...this.$config.httpHeader,
           }
+        )
+        this.$auth.$storage.setLocalStorage(
+          'user',
+          JSON.stringify(user.data[0]),
+          true
         )
         this.$auth.setUser(user.data[0])
         commit('setCart', user.data[0].products)

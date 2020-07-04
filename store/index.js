@@ -50,6 +50,17 @@ export const actions = {
     await dispatch('getAllProducts')
     await dispatch('setpricesValues', [getters.minPrice, getters.maxPrice])
   },
+  async initApp({ dispatch, getters, commit }) {
+    await dispatch('getPages')
+    await dispatch('getcyaPromoted')
+    await dispatch('getAllProducts')
+    await dispatch('setpricesValues', [getters.minPrice, getters.maxPrice])
+    const user = this.$auth.$storage.getLocalStorage('user')
+    if (user) {
+      this.$auth.setUser(user)
+      commit('user/setCart', user.products)
+    }
+  },
 }
 export const getters = {
   cyaPromoted: ({ cyaPromoted }) => cyaPromoted,

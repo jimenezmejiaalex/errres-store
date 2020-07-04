@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div v-if="pageData" class="home">
     <div v-if="pageData.video" class="home__video">
       <video :src="videoUrl" controls />
     </div>

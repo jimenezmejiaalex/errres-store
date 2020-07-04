@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Menu from '~/components/menu-component'
 import Footer from '~/components/footer-component'
 import Logo from '~/components/Logo'
@@ -49,7 +49,11 @@ export default {
   computed: {
     ...mapGetters(['loading']),
   },
+  created() {
+    this.initApp()
+  },
   methods: {
+    ...mapActions(['initApp']),
     showMenu() {
       this.show = !this.show
     },
