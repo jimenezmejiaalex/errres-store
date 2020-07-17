@@ -1,5 +1,6 @@
 import axios from 'axios'
 export const state = () => ({
+  news: [],
   cyaPromoted: [],
   products: [],
   pages: [],
@@ -18,6 +19,9 @@ export const mutations = {
   getcyaPromoted(state, cyaPromoted) {
     state.cyaPromoted = cyaPromoted
   },
+  getNews(state, cyaPromoted) {
+    state.news = cyaPromoted
+  },
   getAllProducts(state, products) {
     state.products = products
   },
@@ -32,6 +36,12 @@ export const actions = {
   async getcyaPromoted({ commit }) {
     const { data } = await axios.get(this.$config.API_PROMOTED)
     commit('getcyaPromoted', data)
+  },
+  async getNews({ commit }) {
+    try {
+      const { data } = await axios.get(this.$config.API_NEWS)
+      commit('getNews', data)
+    } catch (error) {}
   },
   async getAllProducts({ commit }) {
     const { data } = await axios.get(this.$config.API_PRODUCTS)
@@ -52,6 +62,7 @@ export const actions = {
   },
   async initApp({ dispatch, getters, commit }) {
     await dispatch('getPages')
+    await dispatch('getNews')
     await dispatch('getcyaPromoted')
     await dispatch('getAllProducts')
     await dispatch('setpricesValues', [getters.minPrice, getters.maxPrice])
@@ -63,6 +74,7 @@ export const actions = {
   },
 }
 export const getters = {
+  news: ({ news }) => news,
   cyaPromoted: ({ cyaPromoted }) => cyaPromoted,
   cyaPromotedById: ({ cyaPromoted }) => (id) =>
     cyaPromoted.find(({ PId }) => PId === id),

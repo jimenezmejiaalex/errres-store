@@ -135,12 +135,13 @@ export default {
   computed: {
     ...mapGetters({ cart: 'user/cart' }),
     total() {
-      return this.productsSelected
+      return (this.productsSelected
         ? this.productsSelected.reduce(
             (c, e) => c + parseFloat(e.accessory_price.replace(/,/g, '')),
             0
           )
         : 0
+      ).toString()
     },
     items() {
       return this.cart.map((item) => ({

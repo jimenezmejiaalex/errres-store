@@ -3,7 +3,7 @@
     <div v-if="!product">
       <ProgressSpinner style="position: fixed; top: 50%; left: 50%;" />
     </div>
-    <div v-if="product">
+    <div v-if="product" class="py-6">
       <div class="w-full flex flex-col lg:flex-row space-x-4">
         <div class="w-full lg:w-1/2">
           <Galleria
@@ -35,9 +35,10 @@
             <div class="font-bold text-3xl pb-2 text-white">
               {{ product.title }}
             </div>
-            <p class="text-gray-700 text-base text-white">
-              {{ product.trimmed }}
-            </p>
+            <span class="text-gray-700 text-base text-white">
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <p v-html="product.trimmed"></p>
+            </span>
             <div class="flex flex-col justify-start space-y-5">
               <div>
                 <div class="font-bold text-base text-white py-2">Colores:</div>
@@ -49,9 +50,8 @@
                   >
                     <div
                       class="w-8 h-8 rounded-full"
-                      :style="`background-color: red;`"
+                      :style="`background-color: ${color.title};`"
                     ></div>
-                    <div class="text-white text-base">{{ color.title }}</div>
                   </div>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default {
       if (this.$auth.loggedIn) {
         this.requestAddTocart(item)
       } else {
-        this.$router.push('login')
+        this.$router.push('/login')
       }
     },
   },

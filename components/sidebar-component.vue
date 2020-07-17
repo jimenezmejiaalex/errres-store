@@ -1,28 +1,32 @@
 <template>
   <div class="sidebar">
-    <h3>Categorias</h3>
+    <h3 class="text-white py-4 font-semibold text-lg">
+      Categorias de los articulos:
+    </h3>
     <div class="sidebar__filters-content">
-      <SelectButton
-        v-model="selectedCategory"
-        :options="categories"
-        option-label="title"
-      >
-        <template #option="slotProps">
-          <p class="sidebar__options">
-            {{ slotProps.option.title | textFormat }}
-          </p>
-        </template>
-      </SelectButton>
-      <Button
-        class="sidebar__clear-button"
-        label="Limpiar"
+      <div v-for="(category, index) in categories" :key="index" class="p-4">
+        <Checkbox
+          :id="category.id"
+          v-model="categoriesSelected"
+          name="product"
+          :value="category"
+        />
+        <label class="text-white" :for="category.id">{{
+          category.title
+        }}</label>
+      </div>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         @click="clearFilter"
-      />
+      >
+        Limpiar
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'SidebarComponent',
   filters: {
@@ -32,22 +36,28 @@ export default {
   },
   data() {
     return {
-      selectedCategory: null,
+      categoriesSelected: [],
     }
   },
   computed: {
-    categories() {
-      return this.$store.getters.categories
-    },
+    ...mapGetters({
+      categories: 'articles/categories',
+    }),
   },
   watch: {
-    selectedCategory(newVal) {
-      this.$emit('set-filter', newVal)
+    categoriesSelected(newVal) {
+      this.$emit(
+        'set-filter',
+        newVal.map(({ id }) => id)
+      )
     },
+  },
+  created() {
+    this.categoriesSelected = this.categories
   },
   methods: {
     clearFilter() {
-      this.selectedCategory = null
+      this.categoriesSelected = []
     },
   },
 }

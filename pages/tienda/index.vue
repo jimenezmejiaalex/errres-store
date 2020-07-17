@@ -126,6 +126,7 @@ export default {
       allProducts: 'allProducts',
       user: 'user/user',
       cart: 'user/cart',
+      loading: 'loading',
     }),
     productsCount() {
       return this.productsUnique.length
@@ -143,18 +144,6 @@ export default {
         )
       } else {
         return list
-      }
-    },
-  },
-  watch: {
-    loadingProductToCart(newValue, oldValue) {
-      if (!newValue && oldValue) {
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Agregado al carrito',
-          detail: 'El producto ha sido agregado al carrito',
-          life: 3000,
-        })
       }
     },
   },

@@ -20,6 +20,18 @@
             placeholder="Usuario"
           />
         </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+            Correo
+          </label>
+          <input
+            id="email"
+            v-model="mail"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="email"
+            placeholder="Correo"
+          />
+        </div>
         <div class="mb-6">
           <label
             class="block text-gray-700 text-sm font-bold mb-2"
@@ -35,22 +47,41 @@
             placeholder="********"
           />
         </div>
+        <div class="mb-6">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="password2"
+          >
+            Confirmar contraseña
+          </label>
+          <input
+            id="password2"
+            v-model="pass2"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            :class="{ 'border-red-700': pass !== pass2 }"
+            type="password"
+            placeholder="********"
+          />
+        </div>
         <Message v-if="error" severity="error" :closable="false"
           >Ocurrio un error al iniciar sesión: {{ errorMesagge }}</Message
         >
         <div class="flex items-center justify-between">
           <button
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            :class="{
+              'opacity-50 cursor-not-allowed hover:bg-transparent': !isSubmitable,
+            }"
             type="button"
-            @click="login"
+            @click="register"
           >
-            Iniciar sesión
+            Registrarse
           </button>
           <nuxt-link
             class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            to="/register"
+            to="/login"
           >
-            Registrarse
+            Iniciar sesión
           </nuxt-link>
         </div>
       </form>
@@ -64,7 +95,9 @@ export default {
   data() {
     return {
       name: '',
+      mail: '',
       pass: '',
+      pass2: '',
     }
   },
   computed: {
@@ -72,19 +105,38 @@ export default {
       error: 'user/error',
       errorMesagge: 'user/errorMessage',
     }),
-  },
-  watch: {
-    user(newValue) {
-      if (newValue) {
-        this.$router.push('/')
-      }
+    fieldsEmpty() {
+      return (
+        this.name.length === 0 ||
+        this.mail.length === 0 ||
+        this.pass.length === 0 ||
+        this.pass2.length === 0
+      )
+    },
+    isSubmitable() {
+      return !this.fieldsEmpty && this.pass === this.pass2
     },
   },
   methods: {
-    login() {
-      this.loginUser({ name: this.name, pass: this.pass })
+    clearFields() {
+      this.mail = ''
+      this.name = ''
+      this.pass = ''
+      this.pass2 = ''
     },
-    ...mapActions({ loginUser: 'user/loginUser' }),
+    register() {
+      if (this.isSubmitable) {
+        try {
+          this.requestRegisterUser({
+            name: { value: this.name },
+            pass: { value: this.pass },
+            mail: { value: this.mail },
+          })
+          this.clearFields()
+        } catch (error) {}
+      }
+    },
+    ...mapActions({ requestRegisterUser: 'user/registerUser' }),
   },
   head() {
     return {

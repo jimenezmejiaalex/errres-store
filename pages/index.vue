@@ -45,7 +45,40 @@
         </Carousel>
       </div>
     </div>
-    <div class="home__news"></div>
+    <div class="home__news">
+      <div v-if="news" class="cya-promoted">
+        <Carousel
+          :value="news"
+          :num-visible="4"
+          :num-scroll="3"
+          :circular="true"
+          :autoplay-interval="3000"
+          :responsive-options="$config.carouselResponsiveOptions"
+          class="w-full"
+        >
+          <template #header>
+            <h1 class="text-2xl text-white py-8">Errres Noticias</h1>
+          </template>
+          <template #item="slotProps">
+            <router-link :to="`/article/${slotProps.data.id}`">
+              <div class="cya-promoted__card">
+                <div class="cya-promoted__card-image">
+                  <img
+                    :src="introImageSrc(slotProps.data)"
+                    :alt="slotProps.data.name"
+                  />
+                </div>
+                <div class="cya-promoted__card-content">
+                  <div cya-promoted__card-content-title>
+                    {{ slotProps.data.title }}
+                  </div>
+                </div>
+              </div>
+            </router-link>
+          </template>
+        </Carousel>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -57,7 +90,11 @@ export default {
     videoUrl() {
       return `${this.$config.SERVER_PATH}${this.pageData.video.media_video_file}`
     },
-    ...mapGetters({ cyaPromoted: 'cyaPromoted', pageData: 'homePage' }),
+    ...mapGetters({
+      cyaPromoted: 'cyaPromoted',
+      pageData: 'homePage',
+      news: 'news',
+    }),
   },
   methods: {
     introImageSrc(data) {

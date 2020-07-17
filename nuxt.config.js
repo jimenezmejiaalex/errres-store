@@ -1,5 +1,5 @@
-const API = 'http://www.xtfoss.com/errres-server/api'
-const HOST = 'http://www.xtfoss.com'
+const API = 'https://www.xtfoss.com/errres-server/api'
+const HOST = 'https://www.xtfoss.com'
 export default {
   /*
    ** Nuxt rendering mode
@@ -19,6 +19,10 @@ export default {
         hid: 'description',
         name: 'description',
         content: process.env.npm_package_description || '',
+      },
+      {
+        'http-equiv': 'Content-Security-Policy',
+        content: 'upgrade-insecure-requests',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/logo.png' }],
@@ -59,7 +63,13 @@ export default {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    headers: {
+      common: {
+        'Content-Type': 'application/json',
+      },
+    },
+  },
   /*
    ** Build configuration
    ** See https://nuxtjs.org/api/configuration-build/
@@ -81,7 +91,7 @@ export default {
             method: 'post',
             propertyName: 'csrf_token',
           },
-          logout: { url: `${HOST}/errres-server/user/logout`, method: 'get' },
+          logout: false,
           user: false,
         },
         tokenType: 'X-CSFR-Token',
@@ -112,6 +122,7 @@ export default {
       },
     },
     // API Variables
+    LOGOUT: `${HOST}/errres-server/user/logout`,
     API_PRODUCTS: `${API}/store`,
     API_PROMOTED: `${API}/promoted`,
     API_PAGE: `${API}/pages`,
@@ -119,6 +130,10 @@ export default {
     API_CART: `${API}/cart`,
     API_LOGIN_USER: `${HOST}/user/login`,
     API_GET_USER: `${API}/users`,
+    API_REGISTER_USER: `${HOST}/errres-server/user/register?_format=json`,
+    API_POST_USER: `${HOST}/errres-server/user`,
+    API_POST_NODE: `${HOST}/errres-server/node`,
+    API_NEWS: `${API}/news`,
     carouselResponsiveOptions: [
       {
         breakpoint: '1024px',
@@ -136,6 +151,8 @@ export default {
         numScroll: 1,
       },
     ],
+    roles: { value: 'authenticated' },
+    status: { value: '1' },
   },
   server: {
     port: 8080, // default: 3000

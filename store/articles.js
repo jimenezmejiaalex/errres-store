@@ -1,5 +1,16 @@
 import axios from 'axios'
 
+const getCategories = (articles) => {
+  const categoriesList = articles.reduce(
+    (previous, { categories }, index) => [...previous, ...categories],
+    []
+  )
+  const uniqueCategories = new Set(categoriesList.map(({ id }) => id))
+  return [...uniqueCategories].map((id) =>
+    categoriesList.find((el) => el.id === id)
+  )
+}
+
 export default {
   state: () => ({
     articles: [],
@@ -34,6 +45,7 @@ export default {
     },
   },
   getters: {
+    categories: ({ articles }) => getCategories(articles),
     articles: ({ articles }) => articles,
     articlesByCategory: ({ articles }) => (cId) =>
       articles.filter(({ categories }) =>

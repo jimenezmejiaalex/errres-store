@@ -15,7 +15,7 @@
         class="flex flex-col sm:flex-col md:flex-row lg:flex-row xl:flex-row flex-wrap -mx-4"
       >
         <nuxt-link
-          v-for="(article, index) in articles"
+          v-for="(article, index) in articlesFiltered"
           :key="index"
           class="sm:w-full md:w-1/2 lg:w-1/4 bg-cover bg-transparent h-40 p-4"
           :to="`article/${article.id}`"
@@ -51,7 +51,7 @@ export default {
   },
   data() {
     return {
-      filter: null,
+      selected: [],
     }
   },
   computed: {
@@ -59,19 +59,20 @@ export default {
       pageData: 'blogPage',
       articles: 'articles/articles',
       articlesByCategory: 'articles/articlesByCategory',
+      categories: 'articles/categories',
     }),
     articlesFiltered() {
-      return this.filter
-        ? this.$store.getters.articlesByCategory(this.filter.id)
-        : this.articles
+      return this.articles.filter(({ categories }) =>
+        categories.some(({ id }) => this.selected.includes(id))
+      )
     },
     videoUrl() {
       return `${this.$config.SERVER_PATH}${this.pageData.video.media_video_file}`
     },
   },
   methods: {
-    setFilter(category) {
-      this.filter = category
+    setFilter(selected) {
+      this.selected = selected
     },
   },
   head() {

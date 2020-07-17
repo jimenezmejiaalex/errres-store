@@ -2,7 +2,7 @@
   <div class="h-full bg-black flex flex-col">
     <Toast class="w-full" position="topright" />
     <div class="px-2 lg:px-20 xl:px-24">
-      <Logo />
+      <nuxt-link to="/"><Logo /></nuxt-link>
       <div class="flex flex-row justify-between">
         <UserInfo class="block lg:hidden" />
         <div
