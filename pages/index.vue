@@ -12,11 +12,11 @@
       <span v-html="pageData.description"></span>
     </div>
     <div class="home__cya">
-      <div v-if="cyaPromoted" class="cya-promoted">
+      <div v-if="cyaPromoted && cyaPromoted.length" class="cya-promoted">
         <Carousel
           :value="cyaPromoted"
-          :num-visible="4"
-          :num-scroll="3"
+          :num-visible="cyaPromoted.length"
+          :num-scroll="cyaPromoted.length"
           :circular="true"
           :autoplay-interval="3000"
           :responsive-options="$config.carouselResponsiveOptions"
@@ -28,10 +28,11 @@
           <template #item="slotProps">
             <router-link :to="`/product/${slotProps.data.id}`">
               <div class="cya-promoted__card">
-                <div class="cya-promoted__card-image">
+                <div>
                   <img
                     :src="introImageSrc(slotProps.data)"
                     :alt="slotProps.data.name"
+                    class="w-40 hover:opacity-25"
                   />
                 </div>
                 <div class="cya-promoted__card-content">
@@ -46,13 +47,13 @@
       </div>
     </div>
     <div class="home__news">
-      <div v-if="news" class="cya-promoted">
+      <div v-if="news && news.length" class="cya-promoted">
         <Carousel
           :value="news"
-          :num-visible="4"
-          :num-scroll="3"
+          :num-visible="news.length"
+          :num-scroll="news.length"
           :circular="true"
-          :autoplay-interval="3000"
+          :autoplay-interval="4000"
           :responsive-options="$config.carouselResponsiveOptions"
           class="w-full"
         >
@@ -62,8 +63,9 @@
           <template #item="slotProps">
             <router-link :to="`/article/${slotProps.data.id}`">
               <div class="cya-promoted__card">
-                <div class="cya-promoted__card-image">
+                <div>
                   <img
+                    class="w-40 hover:opacity-25"
                     :src="introImageSrc(slotProps.data)"
                     :alt="slotProps.data.name"
                   />
@@ -88,7 +90,7 @@ export default {
   name: 'HomePage',
   computed: {
     videoUrl() {
-      return `${this.$config.SERVER_PATH}${this.pageData.video.media_video_file}`
+      return `${this.pageData.video.media_video_file.url}`
     },
     ...mapGetters({
       cyaPromoted: 'cyaPromoted',
@@ -144,7 +146,6 @@ export default {
     flex-direction: column;
     align-items: center;
     &-content {
-      padding: 5% 0;
       color: white;
       &-title {
         display: flex;

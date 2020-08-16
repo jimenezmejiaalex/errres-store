@@ -5,15 +5,15 @@
         class="flex flex-col md:flex-row py-4 -mx-4 space-y-3 lg:space-x-6 lg:space-y-0"
       >
         <div class="p-4">
-          <img
-            class="w-48"
-            :src="`${$config.SERVER_PATH}/errres-server/sites/default/files/2020-06/logo.png`"
-            alt="Errres"
-          />
+          <img class="w-48" :src="logoImageSrc" alt="Errres" />
         </div>
         <div class="p-4">
           <div class="text-white text-lg font-bold text-left pb-4">Social</div>
-          <a :href="facebook" target="_blank" rel="noopener noreferrer">
+          <a
+            :href="general.facebook_link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div class="text-white text-base p-2 flex flex-row space-x-1">
               <img
                 src="/facebook.png"
@@ -24,7 +24,11 @@
               <span class="text-green-400 text-base">@errres.cr</span>
             </div></a
           >
-          <a :href="instagram" target="_blank" rel="noopener noreferrer">
+          <a
+            :href="general.instagram_link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div class="text-white text-base p-2 flex flex-row space-x-1">
               <img
                 src="/instagram.png"
@@ -70,6 +74,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'FooterComponent',
   filters: {
@@ -83,6 +88,16 @@ export default {
       facebook: 'https://www.facebook.com/errres.cr/',
       instagram: 'https://www.instagram.com/errres.cr/',
     }
+  },
+  computed: {
+    ...mapGetters(['general']),
+    logoImageSrc() {
+      return this.general
+        ? this.general.logo
+          ? this.general.logo.media_image
+          : ''
+        : ''
+    },
   },
 }
 </script>

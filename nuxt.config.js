@@ -1,5 +1,6 @@
-const API = 'https://www.xtfoss.com/errres-server/api'
-const HOST = 'https://www.xtfoss.com'
+const API = 'https://www.errres.org/admin/api'
+// const HOST = 'https://www.xtfoss.com'
+const HOST = 'https://www.errres.org/admin'
 export default {
   /*
    ** Nuxt rendering mode
@@ -50,7 +51,16 @@ export default {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/tailwindcss',
+    [
+      '@nuxtjs/google-analytics',
+      {
+        id: 'UA-173261932-1',
+      },
+    ],
   ],
+  googleAnalytics: {
+    id: 'UA-173261932-1', // Used as fallback if no runtime config is provided
+  },
   /*
    ** Nuxt.js modules
    */
@@ -87,7 +97,7 @@ export default {
         },
         endpoints: {
           login: {
-            url: `${HOST}/errres-server/user/login?_format=json`,
+            url: `${HOST}/user/login?_format=json`,
             method: 'post',
             propertyName: 'csrf_token',
           },
@@ -100,7 +110,7 @@ export default {
   },
 
   env: {
-    HOME_PAGE_CODE: '103',
+    HOME_PAGE_CODE: '1',
     BLOG_PAGE_CODE: '105',
     HISTORY_PAGE_CODE: '104',
     INFORMATION_PAGE_CODE: '296',
@@ -108,12 +118,22 @@ export default {
 
   publicRuntimeConfig: {
     // Global utils variables
+    googleAnalytics: {
+      id: process.env.GOOGLE_ANALYTICS_ID,
+    },
     SERVER_PATH: HOST,
     headers: {
       'Content-Type': 'application/json',
     },
     params: {
       _format: 'json',
+    },
+    credentials: {
+      credentials: true,
+      auth: {
+        username: 'editor',
+        password: 'editor',
+      },
     },
     httpHeader: {
       headers: {
@@ -122,18 +142,24 @@ export default {
       },
     },
     // API Variables
-    LOGOUT: `${HOST}/errres-server/user/logout`,
+    // LOGOUT: `${HOST}/errres-server/user/logout`,
+    LOGOUT: `${HOST}/user/logout`,
     API_PRODUCTS: `${API}/store`,
     API_PROMOTED: `${API}/promoted`,
     API_PAGE: `${API}/pages`,
     API_ARTICLES: `${API}/articles`,
     API_CART: `${API}/cart`,
+    // API_LOGIN_USER: `${HOST}/user/login`,
     API_LOGIN_USER: `${HOST}/user/login`,
     API_GET_USER: `${API}/users`,
-    API_REGISTER_USER: `${HOST}/errres-server/user/register?_format=json`,
-    API_POST_USER: `${HOST}/errres-server/user`,
-    API_POST_NODE: `${HOST}/errres-server/node`,
+    // API_REGISTER_USER: `${HOST}/errres-server/user/register?_format=json`,
+    API_REGISTER_USER: `${HOST}/user/register?_format=json`,
+    // API_POST_USER: `${HOST}/errres-server/user`,
+    // API_POST_NODE: `${HOST}/errres-server/node`,
+    API_POST_USER: `${HOST}/user`,
+    API_POST_NODE: `${HOST}/node`,
     API_NEWS: `${API}/news`,
+    API_GENERAL: `${API}/general-settings`,
     carouselResponsiveOptions: [
       {
         breakpoint: '1024px',
@@ -153,9 +179,23 @@ export default {
     ],
     roles: { value: 'authenticated' },
     status: { value: '1' },
+    exchangeRates: {
+      token: 'M7MIAEZAZ9',
+      mail: 'jimenezmejiaalex@gmail.com',
+    },
   },
   server: {
     port: 8080, // default: 3000
     host: '0.0.0.0', // default: localhost
+  },
+
+  loading: {
+    color: 'white',
+    height: '5px',
+  },
+  loadingIndicator: {
+    name: 'circle',
+    color: '#3B8070',
+    background: 'black',
   },
 }

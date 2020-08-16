@@ -67,7 +67,7 @@ export default {
       )
     },
     videoUrl() {
-      return `${this.$config.SERVER_PATH}${this.pageData.video.media_video_file}`
+      return `${this.pageData.video.media_video_file.url}`
     },
   },
   methods: {

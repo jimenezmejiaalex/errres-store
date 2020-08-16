@@ -143,7 +143,10 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'Product',
   async asyncData({ $axios, params, $config }) {
-    const { data } = await $axios.get(`${$config.API_PRODUCTS}/${params.id}`)
+    const { data } = await $axios.get(
+      `${$config.API_PRODUCTS}/${params.id}`,
+      $config.credentials
+    )
     return { product: data.pop() }
   },
   data() {
@@ -161,9 +164,9 @@ export default {
     productImages() {
       const arrayImages =
         this.product !== undefined && this.product.images !== undefined
-          ? this.product.images.map((e) => `${e.url}`)
+          ? this.product.images.map((e) => `${e.media_image}`)
           : ''
-      return [`${this.ENV.SERVER}${this.product.intro_image}`, ...arrayImages]
+      return [`${this.product.intro_image.media_image}`, ...arrayImages]
     },
   },
   methods: {

@@ -1,9 +1,30 @@
 import axios from 'axios'
+const mapType = {
+  accesorios: 'accessories',
+  prendas: 'collections',
+}
 const parseUserProduct = (product) => ({
   target_id: product.id,
   target_type: 'node',
   target_uuid: product.uuid,
-  url: `/errres-server/node/${product.id}`,
+  url: `/admin/node/${product.id}`,
+})
+const getPurchaseObject = (purchase, user) => ({
+  type: [{ target_id: 'purchase' }],
+  title: [{ value: purchase.paypal.id }],
+  field_cart_: [{ value: purchase.paypal.cart }],
+  field_paypal_id: [{ value: purchase.paypal.id }],
+  field_client: [
+    {
+      target_id: user.id,
+      target_type: 'user',
+      target_uuid: user.uuid,
+      url: `/admin/user/${user.id}`,
+    },
+  ],
+  field_product_list: purchase.products.map((product) =>
+    parseUserProduct(product)
+  ),
 })
 const parseUserBody = (products) => ({
   field_product: products.map((product) => parseUserProduct(product)),
@@ -34,6 +55,12 @@ export default {
     },
     deleteItemCart(state, id) {
       state.cart = state.cart.filter((item) => item.id !== id)
+      this.$auth.user.products = state.cart
+      this.$auth.$storage.setLocalStorage(
+        'user',
+        JSON.stringify(this.$auth.user),
+        true
+      )
     },
     setCart(state, cart) {
       state.cart = cart
@@ -54,25 +81,45 @@ export default {
     },
   },
   actions: {
+    async checkUserDeletableProducts({ commit, getters, dispatch }) {
+      const deletableProducts = this.$auth.user.products.filter(
+        ({ time }) => new Date() - new Date(time) >= 86400000
+      )
+      await deletableProducts.forEach(async ({ id }) => {
+        await dispatch('deleteItemCart', id)
+      })
+    },
     async deleteItemCart({ commit, dispatch, getters }, id) {
       commit('setLoading', true, { root: true })
       try {
+        const { data } = await dispatch('getProduct', id)
+        console.log(data)
+        const [product] = data
+        console.log(product)
+        await dispatch('changeProductDisponibility', {
+          ...product,
+          reserved: false,
+        })
         commit('deleteItemCart', id)
         await dispatch('postToUserCart', getters.cart)
-        const { data } = dispatch('getProduct', id)
-        const [product] = data
-        await dispatch('changeProductDisponibility', product, true)
-      } catch (error) {}
+        await dispatch('getAllProducts', null, { root: true })
+      } catch (error) {
+        console.log(error)
+      }
       commit('setLoading', false, { root: true })
     },
     async addToUserCart({ commit, dispatch, getters }, { id }) {
+      commit('displayModal', true, { root: true })
       commit('setLoading', true, { root: true })
       try {
         const { data } = await dispatch('getProduct', id)
         const [product] = data
-        commit('addToCart', product)
+        commit('addToCart', { ...product, time: new Date() })
         await dispatch('postToUserCart', getters.cart)
-        await dispatch('changeProductDisponibility', [product, false])
+        await dispatch('changeProductDisponibility', {
+          ...product,
+          reserved: true,
+        })
       } catch (error) {}
       commit('setLoading', false, { root: true })
       this._vm.$toast.add({
@@ -83,24 +130,38 @@ export default {
       })
     },
     async getProduct({ commit }, id) {
-      return await axios.get(`${this.$config.API_CART}/${id}`, {
-        headers: this.$config.header,
-        params: this.$config.params,
-      })
+      return await axios.get(`${this.$config.API_CART}/${id}`)
     },
-    async changeProductDisponibility(
-      { commit },
-      [{ id, type }, disponibility]
-    ) {
+    async changeProductDisponibility({ commit }, { id, type, reserved }) {
       try {
-        await this.$axios.patch(
+        const data = await this.$axios.patch(
           `${this.$config.API_POST_NODE}/${id}?_format=json`,
           {
-            type: [{ target_id: type.toLowerCase() }],
-            status: [{ value: disponibility }],
-          }
+            type: [{ target_id: mapType[type.toLowerCase()] }],
+            field_reserved: [{ value: reserved }],
+          },
+          this.$config.credentials
         )
-      } catch (error) {}
+        console.log(data)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async changeProductDisponibilitySold({ commit }, { id, type, status }) {
+      try {
+        const data = await this.$axios.patch(
+          `${this.$config.API_POST_NODE}/${id}?_format=json`,
+          {
+            type: [{ target_id: mapType[type.toLowerCase()] }],
+            field_accessory_sold: [{ value: !status }],
+            status: [{ value: status }],
+          },
+          this.$config.credentials
+        )
+        console.log(data)
+      } catch (error) {
+        console.error(error)
+      }
     },
     async postToUserCart({ commit, dispatch }, cart) {
       commit('setLoading', true, { root: true })
@@ -112,7 +173,9 @@ export default {
         await dispatch('updateUser', {
           current_User: { uid: data.uid[0].value },
         })
-      } catch (error) {}
+      } catch (error) {
+        console.error(error)
+      }
       commit('setLoading', false, { root: true })
     },
     checkUser({ commit }) {
@@ -124,7 +187,7 @@ export default {
     async logoutUser({ commit }) {
       commit('setLoading', true, { root: true })
       try {
-        await this.$axios.get(`${this.$config.POST}`)
+        await this.$axios.get(`${this.$config.POST}`, this.$config.credentials)
         await this.$auth.logout()
         this.$auth.$storage.removeUniversal('user')
       } catch (error) {}
@@ -151,6 +214,7 @@ export default {
           `${this.$config.API_GET_USER}/${data.current_user.uid}`,
           {
             ...this.$config.httpHeader,
+            ...this.$config.credentials,
           }
         )
         commit('setUser', user)
@@ -175,7 +239,7 @@ export default {
         })
       } catch (error) {
         commit('setError', true)
-        commit('setErrorMessage', error)
+        commit('setErrorMessage', 'El usuario o correo ya existe ')
       }
       commit('setLoading', false, { root: true })
     },
@@ -184,16 +248,29 @@ export default {
       try {
         const { data } = await dispatch('getProduct', id)
         const [product] = data
-        await dispatch('postToUserCart', getters.cart)
-        await dispatch('changeProductDisponibility', [product, false])
-      } catch (error) {}
+        await dispatch('changeProductDisponibilitySold', {
+          ...product,
+          status: false,
+        })
+      } catch (error) {
+        console.error(error)
+      }
       commit('setLoading', false, { root: true })
-      this._vm.$toast.add({
-        severity: 'success',
-        summary: 'Agregado al carrito',
-        detail: 'El producto ha sido agregado al carrito',
-        life: 3000,
-      })
+    },
+    async postPurchase({ commit }, purchase) {
+      commit('setLoading', true, { root: true })
+      try {
+        const purchaseObject = getPurchaseObject(purchase, this.$auth.user)
+        const response = await this.$axios.post(
+          `${this.$config.API_POST_NODE}/?_format=json`,
+          purchaseObject,
+          this.$config.credentials
+        )
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+      }
+      commit('setLoading', false, { root: true })
     },
   },
   getters: {

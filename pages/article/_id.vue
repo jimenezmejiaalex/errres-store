@@ -27,14 +27,14 @@
         <img
           :src="imageSrc(slotProps.item)"
           :alt="slotProps.item.title"
-          style="width: 100%; display: block;"
+          class="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl block"
         />
       </template>
       <template #thumbnail="slotProps">
         <img
           :src="imageSrc(slotProps.item)"
           :alt="slotProps.item.title"
-          style="display: block;"
+          class="block"
         />
       </template>
       <template #caption="{item}">
@@ -43,18 +43,17 @@
     </Galleria>
     <div
       v-if="article.images"
-      class="flex flex-col sm:flex-col md:flex-col lg:flex-row xl:flex-row flex-wrap -mx-4"
+      class="flex flex-col sm:flex-col md:flex-row lg:flex-row xl:flex-row flex-wrap -mx-4"
     >
       <div
         v-for="(image, index) of article.images"
         :key="index"
-        class="sm:w-full md:w-full lg:w-2/5 xl:w-1/5 mx-4 my-4 rounded-md"
+        class="mx-4 my-4 rounded-md"
       >
         <img
           :src="imageSrc(image)"
           :alt="image.title"
-          style="cursor: pointer;"
-          class="w-full"
+          class="w-full max-w-sm lg:max-w-md hover:opacity-25"
           @click="imageClick(index)"
         />
       </div>
@@ -67,7 +66,8 @@ export default {
   name: 'ArticleComponent',
   async asyncData({ $axios, params, $config }) {
     const { data } = await $axios.get(
-      `${$config.API_ARTICLES}/article/${params.id}`
+      `${$config.API_ARTICLES}/article/${params.id}`,
+      $config.credentials
     )
     return { article: data.pop() }
   },

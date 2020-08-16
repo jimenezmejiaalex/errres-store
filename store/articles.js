@@ -27,21 +27,23 @@ export default {
   actions: {
     async getArticles({ commit }, pageCode) {
       const { data } = await axios.get(
-        `${this.$config.API_ARTICLES}/${pageCode}`
+        `${this.$config.API_ARTICLES}/${pageCode}`,
+        this.$config.credentials
       )
       commit('getArticles', data)
     },
     async getArticle({ commit }, code) {
       const { data } = await axios.get(
-        `${this.$config.API_ARTICLES}/article/${code}`
+        `${this.$config.API_ARTICLES}/article/${code}`,
+        this.$config.credentials
       )
       commit('getArticle', data.pop())
     },
     async getBlogArticles({ dispatch }) {
-      await dispatch('getArticles', '105')
+      await dispatch('getArticles', '3')
     },
     async getHistoryArticles({ dispatch }) {
-      await dispatch('getArticles', '104')
+      await dispatch('getArticles', '4')
     },
   },
   getters: {

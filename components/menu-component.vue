@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full lg:w-1/2">
+  <div class="flex flex-col w-10/12 lg:w-1/2">
     <nav
       :class="{
         block: show,
@@ -10,8 +10,8 @@
       class="py-4 lg:block"
     >
       <ul class="menu flex flex-col lg:flex-row">
-        <li class="sm:items-start">
-          <a class="middle text-xl w-full" href="#">
+        <li class="sm:items-start" @click="closeMenu">
+          <a class="middle text-xl w-full">
             <nuxt-link to="/">Inicio</nuxt-link>
           </a>
         </li>
@@ -19,8 +19,9 @@
           v-for="(itemMenu, index) in menuItems"
           :key="index"
           class="sm:items-start"
+          @click="closeMenu"
         >
-          <a class="middle text-xl w-full" href="#">
+          <a class="middle text-xl w-full">
             <nuxt-link :to="`/${itemMenu.url}`">{{
               itemMenu.title | menuFormat
             }}</nuxt-link>
@@ -54,6 +55,11 @@ export default {
         { title: 'información', url: 'informacion' },
       ],
     }
+  },
+  methods: {
+    closeMenu() {
+      setTimeout(() => this.$emit('close'), 300)
+    },
   },
 }
 </script>

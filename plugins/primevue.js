@@ -29,8 +29,10 @@ import BlockUI from 'primevue/blockui'
 import Toast from 'primevue/toast'
 import Slider from 'primevue/slider'
 import Message from 'primevue/message'
+import RadioButton from 'primevue/radiobutton'
 import ProgressSpinner from 'primevue/progressspinner'
 Vue.use(ToastService)
+Vue.component('RadioButton', RadioButton)
 Vue.component('Message', Message)
 Vue.component('Slider', Slider)
 Vue.component('ProgressSpinner', ProgressSpinner)
