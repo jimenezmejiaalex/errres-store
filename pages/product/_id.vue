@@ -139,11 +139,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'Product',
   async asyncData({ $axios, params, $config }) {
-    const { data } = await $axios.get(
+    const { data } = await axios.get(
       `${$config.API_PRODUCTS}/${params.id}`,
       $config.credentials
     )

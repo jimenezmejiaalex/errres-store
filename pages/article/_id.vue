@@ -62,10 +62,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'ArticleComponent',
   async asyncData({ $axios, params, $config }) {
-    const { data } = await $axios.get(
+    const { data } = await axios.get(
       `${$config.API_ARTICLES}/article/${params.id}`,
       $config.credentials
     )
