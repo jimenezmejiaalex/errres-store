@@ -57,7 +57,7 @@
             <div
               class="border-solid border border-gray-800 flex flex-col rounded p-2"
             >
-              <nuxt-link :to="`product/${item.id}`">
+              <nuxt-link :to="`/product/${item.id}`">
                 <img
                   :alt="item.name"
                   :src="imageSrc(item.intro_image)"
@@ -65,7 +65,7 @@
                 />
               </nuxt-link>
               <div class="w-full flex flex-col justify-between">
-                <nuxt-link :to="`product/${item.id}`">
+                <nuxt-link :to="`/product/${item.id}`">
                   <div class="font-bold text-2xl w-full text-white">
                     {{ item.title }}
                   </div>
