@@ -22,9 +22,10 @@
           @click="closeMenu"
         >
           <a class="middle text-xl w-full">
-            <nuxt-link :to="`/${itemMenu.url}`">{{
-              itemMenu.title | menuFormat
-            }}</nuxt-link>
+            <nuxt-link :to="`/${itemMenu.url}`">
+              <em :class="`pi ${itemMenu.logo} px-2 lg:hidden`"></em>
+              {{ itemMenu.title | menuFormat }}
+            </nuxt-link>
           </a>
         </li>
       </ul>
@@ -49,10 +50,14 @@ export default {
   data() {
     return {
       menuItems: [
-        { title: 'tienda', url: 'tienda' },
-        { title: 'blog', url: 'blog' },
-        { title: 'historia', url: 'historia' },
-        { title: 'información', url: 'informacion' },
+        { title: 'tienda', url: 'tienda', logo: 'pi-shopping-cart' },
+        { title: 'blog', url: 'blog', logo: 'pi-file-o' },
+        { title: 'historia', url: 'historia', logo: 'pi-id-card' },
+        {
+          title: 'información',
+          url: 'informacion',
+          logo: 'pi-question-circle',
+        },
       ],
     }
   },
@@ -129,5 +134,13 @@ a.middle:before {
 a.middle:hover:before {
   visibility: visible;
   transform: scaleX(1);
+}
+
+@media (min-width: 1024px) {
+  a.middle {
+    .pi {
+      display: none;
+    }
+  }
 }
 </style>

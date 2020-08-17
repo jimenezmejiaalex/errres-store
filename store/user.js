@@ -38,6 +38,7 @@ export default {
     cart: [],
     error: false,
     errorMessage: '',
+    purchaseId: null,
   }),
   mutations: {
     logoutUser(state) {
@@ -78,6 +79,9 @@ export default {
         true
       )
       this.$auth.setUser(user.data[0])
+    },
+    setPurchase(state, purchaseId) {
+      state.purchaseId = purchaseId
     },
   },
   actions: {
@@ -250,7 +254,7 @@ export default {
         const [product] = data
         await dispatch('changeProductDisponibilitySold', {
           ...product,
-          status: false,
+          status: true,
         })
       } catch (error) {
         console.error(error)
@@ -261,12 +265,31 @@ export default {
       commit('setLoading', true, { root: true })
       try {
         const purchaseObject = getPurchaseObject(purchase, this.$auth.user)
-        const response = await this.$axios.post(
+        const { data } = await this.$axios.post(
           `${this.$config.API_POST_NODE}/?_format=json`,
           purchaseObject,
           this.$config.credentials
         )
-        console.log(response)
+        commit('setPurchase', data.nid[0].value)
+        console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
+      commit('setLoading', false, { root: true })
+    },
+    async postShippingInfo({ commit, getters }, shippingInfo) {
+      commit('setLoading', true, { root: true })
+      try {
+        await this.$axios.patch(
+          `${this.$config.API_POST_NODE}/${getters.purchaseId}?_format=json`,
+          {
+            type: [{ target_id: 'purchase' }],
+            field_complete_name: [{ value: shippingInfo.name }],
+            field_phone_number: [{ value: shippingInfo.phone }],
+            field_direction: [{ value: shippingInfo.direction }],
+          },
+          this.$config.credentials
+        )
       } catch (error) {
         console.log(error)
       }
@@ -280,5 +303,6 @@ export default {
     errorMessage: ({ errorMessage }) => errorMessage,
     isInCart: ({ cart }) => (itemId) => cart.some(({ id }) => id === itemId),
     cartLength: ({ cart }) => cart.length,
+    purchaseId: ({ purchaseId }) => purchaseId,
   },
 }

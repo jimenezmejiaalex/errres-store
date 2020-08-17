@@ -2,6 +2,12 @@
   <div class="bg-gray-900 bg-opacity-50">
     <div class="flex flex-col w-full p-4">
       <div
+        class="self-center cursor-pointer hover:opacity-25"
+        @click="backToTop"
+      >
+        <em class="text-white pi pi-angle-up" style="font-size: 1.5rem;"></em>
+      </div>
+      <div
         class="flex flex-col md:flex-row py-4 -mx-4 space-y-3 lg:space-x-6 lg:space-y-0"
       >
         <div class="p-4">
@@ -97,6 +103,22 @@ export default {
           ? this.general.logo.media_image
           : ''
         : ''
+    },
+  },
+  methods: {
+    backToTop() {
+      const scrollToTop = () => {
+        if (process.browser) {
+          const c =
+            document.documentElement.scrollTop || document.body.scrollTop
+          if (c > 0) {
+            window.requestAnimationFrame(scrollToTop)
+            window.scrollTo(0, c - c / 10)
+          }
+        }
+      }
+      scrollToTop()
+      // window.scrollTo(0, 0)
     },
   },
 }

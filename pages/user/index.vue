@@ -1,141 +1,145 @@
 <template>
   <div v-if="user" class="py-4">
-    <div v-if="cart.length > 0" class="w-full">
-      <div class="w-full lg:w-3/4 flex flex-row justify-between p-4">
-        <h3 class="text-white text-xl font-bold py-4">
-          Productos en el carrito
-        </h3>
-        <div class="flex flex-row justify-between py-4 space-x-4">
-          <div class="text-blue-600">
-            <span v-if="!checked">Todos</span>
-            <span v-else>Ninguno</span>
+    <client-only placeholder="Loading...">
+      <div v-if="cart.length > 0" class="w-full">
+        <div class="w-full lg:w-3/4 flex flex-row justify-between p-4">
+          <h3 class="text-white text-xl font-bold py-4">
+            Productos en el carrito
+          </h3>
+          <div class="flex flex-row justify-between py-4 space-x-4">
+            <div class="text-blue-600">
+              <span v-if="!checked">Todos</span>
+              <span v-else>Ninguno</span>
+            </div>
+            <Checkbox id="binary" v-model="checked" :binary="true" />
           </div>
-          <Checkbox id="binary" v-model="checked" :binary="true" />
         </div>
-      </div>
-      <div class="w-full flex flex-col lg:flex-row lg:space-x-4">
-        <div class="w-full lg:w-4/5 flex flex-col">
-          <div class="w-full flex flex-col space-y-2">
-            <div
-              v-for="product in cart"
-              :key="product.id"
-              class="flex flex-row space-x-2 border border-gray-800 rounded-sm"
-            >
-              <div class="w-1/6 p-2 flex flex-row justify-center items-center">
-                <Checkbox
-                  :id="product.id"
-                  v-model="productsSelected"
-                  name="product"
-                  :value="product"
-                />
-              </div>
-              <nuxt-link
-                :to="`product/${product.id}`"
-                class="flex flex-row w-4/5"
+        <div class="w-full flex flex-col lg:flex-row lg:space-x-4">
+          <div class="w-full lg:w-4/5 flex flex-col">
+            <div class="w-full flex flex-col space-y-2">
+              <div
+                v-for="product in cart"
+                :key="product.id"
+                class="flex flex-row space-x-2 border border-gray-800 rounded-sm"
               >
-                <div class="w-1/4 p-2">
-                  <img
-                    class="w-full rounded-sm"
-                    :src="imageURL(product)"
-                    :alt="product.title"
+                <div
+                  class="w-1/6 p-2 flex flex-row justify-center items-center"
+                >
+                  <Checkbox
+                    :id="product.id"
+                    v-model="productsSelected"
+                    name="product"
+                    :value="product"
                   />
                 </div>
-                <div class="flex flex-col w-3/4 p-2 justify-between">
-                  <div class="w-full text-white font-bold p-2 text-base">
-                    <span>{{ product.title }}</span>
+                <nuxt-link
+                  :to="`product/${product.id}`"
+                  class="flex flex-row w-4/5"
+                >
+                  <div class="w-1/4 p-2">
+                    <img
+                      class="w-full rounded-sm"
+                      :src="imageURL(product)"
+                      :alt="product.title"
+                    />
                   </div>
-                  <div class="w-full text-white font-semibold p-2 text-base">
-                    <span>
-                      {{
-                        (product.price || product.accessory_price)
-                          | mappingPrice
-                          | priceFormat
-                      }}
-                    </span>
+                  <div class="flex flex-col w-3/4 p-2 justify-between">
+                    <div class="w-full text-white font-bold p-2 text-base">
+                      <span>{{ product.title }}</span>
+                    </div>
+                    <div class="w-full text-white font-semibold p-2 text-base">
+                      <span>
+                        {{
+                          (product.price || product.accessory_price)
+                            | mappingPrice
+                            | priceFormat
+                        }}
+                      </span>
+                    </div>
                   </div>
+                </nuxt-link>
+                <div
+                  class="w-1/5 p-2 flex flex-row justify-center items-center"
+                >
+                  <button
+                    class="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                    @click="removeFromCart(product.id)"
+                  >
+                    <em class="pi pi-trash"></em>
+                    <span class="hidden md:block">Eliminar</span>
+                  </button>
                 </div>
-              </nuxt-link>
-              <div class="w-1/5 p-2 flex flex-row justify-center items-center">
-                <button
-                  class="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                  @click="removeFromCart(product.id)"
-                >
-                  <em class="pi pi-trash"></em>
-                  <span class="hidden md:block">Eliminar</span>
-                </button>
+              </div>
+            </div>
+            <div class="w-full flex flex-col py-4 space-y-4">
+              <div class="text-lg text-white font-bold">
+                * Seleccione la localización del envio
+              </div>
+              <div
+                class="flex flex-col md:flex-row md:flex-wrap space-x-0 md:space-x-4"
+              >
+                <div>
+                  <RadioButton
+                    id="GAM"
+                    v-model="gam"
+                    name="GAM"
+                    :value="gamPrice"
+                  />
+                  <label for="GAM" class="text-lg text-white"
+                    >Dentro de la GAM ( {{ gamPrice | priceFormat }} )</label
+                  >
+                </div>
+                <div>
+                  <RadioButton
+                    id="noGAM"
+                    v-model="gam"
+                    name="noGAM"
+                    :value="noGamPrice"
+                  />
+                  <label for="noGAM" class="text-lg text-white"
+                    >Fuera de la GAM ( {{ noGamPrice | priceFormat }} )</label
+                  >
+                </div>
               </div>
             </div>
           </div>
-          <div class="w-full flex flex-col py-4 space-y-4">
-            <div class="text-lg text-white font-bold">
-              * Seleccione la localización del envio
-            </div>
+          <div class="w-full lg:w-1/5 py-4 lg:py-0 space-y-2">
             <div
-              class="flex flex-col md:flex-row md:flex-wrap space-x-0 md:space-x-4"
+              class="w-full border border-gray-800 rounded p-2 flex flex-col"
             >
-              <div>
-                <RadioButton
-                  id="GAM"
-                  v-model="gam"
-                  name="GAM"
-                  :value="gamPrice"
-                />
-                <label for="GAM" class="text-lg text-white"
-                  >Dentro de la GAM ( {{ gamPrice | priceFormat }} )</label
-                >
-              </div>
-              <div>
-                <RadioButton
-                  id="noGAM"
-                  v-model="gam"
-                  name="noGAM"
-                  :value="noGamPrice"
-                />
-                <label for="noGAM" class="text-lg text-white"
-                  >Fuera de la GAM ( {{ noGamPrice | priceFormat }} )</label
-                >
-              </div>
+              <div class="text-xl font-bold text-white">Total:</div>
+              <div class="text-white">{{ total | priceFormat }}</div>
             </div>
+            <PayPal
+              v-if="gam && productsSelected.length"
+              class="p-sm-12 p-md-12 p-lg-3 p-xl-3"
+              :amount="paypalTotal"
+              :currency="currency"
+              :client="paypal"
+              env="sandbox"
+              :items="items"
+              :button-style="paypalButtonStyle"
+              @payment-authorized="paymentAuthorized"
+              @payment-completed="paymentCompleted"
+              @payment-cancelled="paymentCancelled"
+            ></PayPal>
           </div>
-        </div>
-        <div class="w-full lg:w-1/5 py-4 lg:py-0 space-y-2">
-          <div class="w-full border border-gray-800 rounded p-2 flex flex-col">
-            <div class="text-xl font-bold text-white">Total:</div>
-            <div class="text-white">{{ total | priceFormat }}</div>
-          </div>
-          <PayPal
-            v-if="gam && productsSelected.length"
-            class="p-sm-12 p-md-12 p-lg-3 p-xl-3"
-            :amount="paypalTotal"
-            :currency="currency"
-            :client="paypal"
-            env="sandbox"
-            :items="items"
-            :button-style="paypalButtonStyle"
-            @payment-authorized="paymentAuthorized"
-            @payment-completed="paymentCompleted"
-            @payment-cancelled="paymentCancelled"
-          ></PayPal>
         </div>
       </div>
-    </div>
-    <div v-else>
-      <h3 class="text-white text-xl font-bold py-20">
-        No tiene productos en el carrito
-      </h3>
-    </div>
+      <div v-else>
+        <h3 class="text-white text-xl font-bold py-20">
+          No tiene productos en el carrito
+        </h3>
+      </div>
+    </client-only>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import PayPal from 'vue-paypal-checkout'
 export default {
   name: 'User',
   middleware: 'auth',
-  components: {
-    PayPal,
-  },
   filters: {
     mappingPrice(textPrice) {
       if (!textPrice) return ''

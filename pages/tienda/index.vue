@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div v-if="!empty" class="w-full">
     <div class="w-full">
       <div class="w-full flex flex-row py-2 hidden">
         <InputText
@@ -98,6 +98,13 @@
       </div>
     </div>
   </div>
+  <div v-else>
+    <div
+      class="w-full flex flex-col items-center justify-center text-white text-2xl p-4"
+    >
+      No existen productos disponibles en este momento
+    </div>
+  </div>
 </template>
 
 <script>
@@ -145,6 +152,9 @@ export default {
       } else {
         return list
       }
+    },
+    empty() {
+      return this.products.length <= 0
     },
   },
   async mounted() {

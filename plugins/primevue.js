@@ -31,7 +31,9 @@ import Slider from 'primevue/slider'
 import Message from 'primevue/message'
 import RadioButton from 'primevue/radiobutton'
 import ProgressSpinner from 'primevue/progressspinner'
+import PayPal from 'vue-paypal-checkout'
 Vue.use(ToastService)
+Vue.component('PayPal', PayPal)
 Vue.component('RadioButton', RadioButton)
 Vue.component('Message', Message)
 Vue.component('Slider', Slider)

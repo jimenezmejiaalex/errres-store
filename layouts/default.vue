@@ -1,7 +1,7 @@
 <template>
   <div class="h-full bg-black flex flex-col">
     <Toast v-if="dataReady" class="w-full" position="topright" />
-    <div v-if="dataReady" class="px-2 lg:px-20 xl:px-24">
+    <div v-if="dataReady" class="px-6 lg:px-20 xl:px-24">
       <nuxt-link to="/">
         <Logo v-cloak />
       </nuxt-link>
@@ -30,7 +30,7 @@
         <UserInfo class="hidden lg:block self-center" />
       </div>
     </div>
-    <div v-if="dataReady" class="px-4 lg:px-20 xl:px-24">
+    <div v-if="dataReady" class="px-8 lg:px-20 xl:px-24">
       <Dialog
         :visible.sync="displayModal"
         :style="{ width: '50vw' }"
@@ -46,20 +46,47 @@
       </Dialog>
       <nuxt v-cloak />
     </div>
-    <div class="fixed layout__social-media">
+    <div
+      v-if="dataReady"
+      class="fixed right-0 bg-green-800 border rounded-md border-green-700 bottom-0"
+    >
       <a :href="facebook" target="_blank" rel="noopener noreferrer">
-        <div class="text-white text-base p-2 flex flex-row space-x-1">
-          <img src="/facebook.png" alt="Facebook" width="29px" /></div
-      ></a>
+        <div class="text-white text-base p-1 flex flex-row space-x-1">
+          <img src="/facebook.png" alt="Facebook" width="29px" />
+        </div>
+      </a>
       <a :href="instagram" target="_blank" rel="noopener noreferrer">
-        <div class="text-white text-base p-2 flex flex-row space-x-1">
-          <img src="/instagram.png" alt="Instagram" width="29px" /></div
-      ></a>
+        <div class="text-white text-base p-1 flex flex-row space-x-1">
+          <img src="/instagram.png" alt="Instagram" width="29px" />
+        </div>
+      </a>
+      <a :href="whatsapp" target="_blank" rel="noopener noreferrer">
+        <div class="text-white text-base p-1 flex flex-row space-x-1">
+          <img src="/whatsapp.png" alt="Facebook" width="29px" />
+        </div>
+      </a>
+      <a :href="`mailto:${email}`" target="_blank" rel="noopener noreferrer">
+        <div class="text-white text-base p-1 flex flex-row space-x-1">
+          <img src="/email.png" alt="Instagram" width="29px" />
+        </div>
+      </a>
     </div>
     <Footer v-if="dataReady" class="sm:px-0 md:px-4 lg:px-20 xl:px-24" />
     <ProgressSpinner
       v-if="loading"
-      style="position: fixed; top: 50%; left: 50%;"
+      class="fixed object-center"
+      style="
+        width: 50px;
+        height: 50px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -[1/2(50px) ];
+        margin-left: -[1/2(50px) ];
+      "
+      stroke-width="8"
+      fill="#EEEEEE"
+      animation-duration=".5s"
     />
   </div>
 </template>
@@ -92,6 +119,12 @@ export default {
     instagram() {
       return this.general ? this.general.instagram_link : ''
     },
+    whatsapp() {
+      return this.general ? this.general.whatsapp_link : ''
+    },
+    email() {
+      return this.general ? this.general.email : ''
+    },
   },
   created() {
     this.initApp()
@@ -114,7 +147,6 @@ html {
 .layout {
   &__social-media {
     top: 85%;
-    left: 95%;
   }
 }
 </style>

@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'HomePage',
   computed: {
@@ -98,7 +98,11 @@ export default {
       news: 'news',
     }),
   },
+  created() {
+    this.getcyaPromoted()
+  },
   methods: {
+    ...mapActions(['getcyaPromoted']),
     introImageSrc(data) {
       return data.intro_image.media_image
     },

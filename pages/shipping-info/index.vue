@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Purchase',
   data() {
@@ -95,16 +95,22 @@ export default {
       return !(
         this.formData.name.length ||
         this.formData.phone.length ||
-        this.formData.name.length
+        this.formData.direction.length
       )
     },
     contactoInfo() {
       return this.general ? this.general.contacto_notificacion : ''
     },
-    ...mapGetters(['paypalResponse', 'general']),
+    ...mapGetters(['paypalResponse', 'general', 'user/purchaseId']),
+  },
+  created() {
+    if (!this.purchaseId) {
+      this.$router.push(`/`)
+    }
   },
   methods: {
-    sendInfo() {
+    ...mapActions({ postShippingInfo: 'user/postShippingInfo' }),
+    async sendInfo() {
       if (this.emptyInfo) {
         this.$toast.add({
           severity: 'error',
@@ -113,6 +119,8 @@ export default {
           life: 3000,
         })
       } else {
+        await this.postShippingInfo(this.formData)
+        this.$router.push(`/user`)
         console.log('Send Info')
       }
     },
