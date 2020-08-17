@@ -1,12 +1,34 @@
+import axios from 'axios'
 const API = 'https://www.errres.org/admin/api'
-// const HOST = 'https://www.xtfoss.com'
 const HOST = 'https://www.errres.org/admin'
+
+const dynamicRoutes = async () => {
+  const products = await axios.get(`${API}/store`, {
+    credentials: true,
+    auth: {
+      username: 'editor',
+      password: 'editor',
+    },
+  })
+  const articles = await axios.get(`${API}/articles`, {
+    credentials: true,
+    auth: {
+      username: 'editor',
+      password: 'editor',
+    },
+  })
+  const routesProducts = products.data.map(({ id }) => `/product/${id}`)
+  const routesArticles = articles.data.map(({ id }) => `/article/${id}`)
+  const routes = routesProducts.concat(routesArticles)
+  return routes
+}
+
 export default {
   /*
    ** Nuxt rendering mode
    ** See https://nuxtjs.org/api/configuration-mode
    */
-  mode: 'universal',
+  mode: 'spa',
   /*
    ** Headers of the page
    ** See https://nuxtjs.org/api/configuration-head
@@ -85,7 +107,6 @@ export default {
    ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {},
-
   auth: {
     strategies: {
       local: {
@@ -108,14 +129,12 @@ export default {
       },
     },
   },
-
   env: {
     HOME_PAGE_CODE: '1',
     BLOG_PAGE_CODE: '105',
     HISTORY_PAGE_CODE: '104',
     INFORMATION_PAGE_CODE: '296',
   },
-
   publicRuntimeConfig: {
     // Global utils variables
     googleAnalytics: {
@@ -188,7 +207,6 @@ export default {
     port: 8080, // default: 3000
     host: '0.0.0.0', // default: localhost
   },
-
   loading: {
     color: 'white',
     height: '5px',
@@ -197,5 +215,8 @@ export default {
     name: 'circle',
     color: '#3B8070',
     background: 'black',
+  },
+  generate: {
+    routes: dynamicRoutes,
   },
 }
