@@ -73,12 +73,8 @@ export default {
       state.errorMessage = message
     },
     setUser(state, user) {
-      this.$auth.$storage.setUniversal(
-        'user',
-        JSON.stringify(user.data[0]),
-        true
-      )
-      this.$auth.setUser(user.data[0])
+      this.$auth.$storage.setUniversal('user', JSON.stringify(user), true)
+      this.$auth.setUser(user)
     },
     setPurchase(state, purchaseId) {
       state.purchaseId = purchaseId
@@ -97,9 +93,7 @@ export default {
       commit('setLoading', true, { root: true })
       try {
         const { data } = await dispatch('getProduct', id)
-        console.log(data)
         const [product] = data
-        console.log(product)
         await dispatch('changeProductDisponibility', {
           ...product,
           reserved: false,
@@ -107,9 +101,7 @@ export default {
         commit('deleteItemCart', id)
         await dispatch('postToUserCart', getters.cart)
         await dispatch('getAllProducts', null, { root: true })
-      } catch (error) {
-        console.log(error)
-      }
+      } catch (error) {}
       commit('setLoading', false, { root: true })
     },
     async addToUserCart({ commit, dispatch, getters }, { id }) {
@@ -138,7 +130,7 @@ export default {
     },
     async changeProductDisponibility({ commit }, { id, type, reserved }) {
       try {
-        const data = await this.$axios.patch(
+        await this.$axios.patch(
           `${this.$config.API_POST_NODE}/${id}?_format=json`,
           {
             type: [{ target_id: mapType[type.toLowerCase()] }],
@@ -146,14 +138,13 @@ export default {
           },
           this.$config.credentials
         )
-        console.log(data)
       } catch (error) {
         console.error(error)
       }
     },
     async changeProductDisponibilitySold({ commit }, { id, type, status }) {
       try {
-        const data = await this.$axios.patch(
+        await this.$axios.patch(
           `${this.$config.API_POST_NODE}/${id}?_format=json`,
           {
             type: [{ target_id: mapType[type.toLowerCase()] }],
@@ -162,7 +153,6 @@ export default {
           },
           this.$config.credentials
         )
-        console.log(data)
       } catch (error) {
         console.error(error)
       }
@@ -191,7 +181,6 @@ export default {
     async logoutUser({ commit }) {
       commit('setLoading', true, { root: true })
       try {
-        await this.$axios.get(`${this.$config.POST}`, this.$config.credentials)
         await this.$auth.logout()
         this.$auth.$storage.removeUniversal('user')
       } catch (error) {}
@@ -221,7 +210,7 @@ export default {
             ...this.$config.credentials,
           }
         )
-        commit('setUser', user)
+        commit('setUser', { ...user.data[0], ...data })
         commit('setCart', user.data[0].products)
       } catch (error) {}
     },
@@ -271,10 +260,7 @@ export default {
           this.$config.credentials
         )
         commit('setPurchase', data.nid[0].value)
-        console.log(data)
-      } catch (error) {
-        console.log(error)
-      }
+      } catch (error) {}
       commit('setLoading', false, { root: true })
     },
     async postShippingInfo({ commit, getters }, shippingInfo) {
@@ -290,9 +276,7 @@ export default {
           },
           this.$config.credentials
         )
-      } catch (error) {
-        console.log(error)
-      }
+      } catch (error) {}
       commit('setLoading', false, { root: true })
     },
   },

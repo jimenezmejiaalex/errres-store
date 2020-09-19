@@ -120,12 +120,10 @@ export default {
           login: {
             url: `${HOST}/user/login?_format=json`,
             method: 'post',
-            propertyName: 'csrf_token',
           },
           logout: false,
           user: false,
         },
-        tokenType: 'X-CSFR-Token',
       },
     },
   },

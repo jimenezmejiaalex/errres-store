@@ -121,7 +121,6 @@ export default {
       } else {
         await this.postShippingInfo(this.formData)
         this.$router.push(`/user`)
-        console.log('Send Info')
       }
     },
   },

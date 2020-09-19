@@ -52,22 +52,22 @@
     >
       <a :href="facebook" target="_blank" rel="noopener noreferrer">
         <div class="text-white text-base p-1 flex flex-row space-x-1">
-          <img src="/facebook.png" alt="Facebook" width="29px" />
+          <img src="/facebook.png" alt="Facebook" class="w-8 h-8" />
         </div>
       </a>
       <a :href="instagram" target="_blank" rel="noopener noreferrer">
         <div class="text-white text-base p-1 flex flex-row space-x-1">
-          <img src="/instagram.png" alt="Instagram" width="29px" />
+          <img src="/instagram.png" alt="Instagram" class="w-8 h-8" />
         </div>
       </a>
       <a :href="whatsapp" target="_blank" rel="noopener noreferrer">
         <div class="text-white text-base p-1 flex flex-row space-x-1">
-          <img src="/whatsapp.png" alt="Facebook" width="29px" />
+          <img src="/whatsapp.png" alt="Whatsapp" class="w-8 h-8" />
         </div>
       </a>
       <a :href="`mailto:${email}`" target="_blank" rel="noopener noreferrer">
         <div class="text-white text-base p-1 flex flex-row space-x-1">
-          <img src="/email.png" alt="Instagram" width="29px" />
+          <img src="/email.png" alt="Mail" class="w-8 h-8" />
         </div>
       </a>
     </div>

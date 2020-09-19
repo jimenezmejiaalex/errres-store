@@ -268,9 +268,7 @@ export default {
     changeToReadMode() {
       this.editMode = false
     },
-    paymentAuthorized(data) {
-      // console.log(data)
-    },
+    paymentAuthorized(data) {},
     async paymentCompleted(data) {
       this.setPaypalResponse({ paypal: data, products: this.productsSelected })
       await this.postPurchase({ paypal: data, products: this.productsSelected })
@@ -279,9 +277,7 @@ export default {
       )
       this.$router.push(`/shipping-info`)
     },
-    paymentCancelled(data) {
-      // console.log(data)
-    },
+    paymentCancelled(data) {},
     async finishPurchase(id) {
       await this.setAsSold(id)
       await this.removeFromCart(id)
