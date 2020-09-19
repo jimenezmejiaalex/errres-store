@@ -4,8 +4,8 @@
       <div class="text-white text-xl font-bold pb-4">
         Informacion importante
       </div>
-      <!-- eslint-disable-next-line -->
       <div class="py-4">
+        <!-- eslint-disable-next-line -->
         <span v-html="contactoInfo"></span>
       </div>
       <div>

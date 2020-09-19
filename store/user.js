@@ -138,9 +138,7 @@ export default {
           },
           this.$config.credentials
         )
-      } catch (error) {
-        console.error(error)
-      }
+      } catch (error) {}
     },
     async changeProductDisponibilitySold({ commit }, { id, type, status }) {
       try {
@@ -153,9 +151,7 @@ export default {
           },
           this.$config.credentials
         )
-      } catch (error) {
-        console.error(error)
-      }
+      } catch (error) {}
     },
     async postToUserCart({ commit, dispatch }, cart) {
       commit('setLoading', true, { root: true })
@@ -167,9 +163,7 @@ export default {
         await dispatch('updateUser', {
           current_User: { uid: data.uid[0].value },
         })
-      } catch (error) {
-        console.error(error)
-      }
+      } catch (error) {}
       commit('setLoading', false, { root: true })
     },
     checkUser({ commit }) {
@@ -245,9 +239,7 @@ export default {
           ...product,
           status: true,
         })
-      } catch (error) {
-        console.error(error)
-      }
+      } catch (error) {}
       commit('setLoading', false, { root: true })
     },
     async postPurchase({ commit }, purchase) {
