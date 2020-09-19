@@ -201,10 +201,6 @@ export default {
       mail: 'jimenezmejiaalex@gmail.com',
     },
   },
-  server: {
-    port: 8080, // default: 3000
-    host: '0.0.0.0', // default: localhost
-  },
   loading: {
     color: 'white',
     height: '5px',
